@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: installing dependencies
-        run: sudo apt install -y libgl1-mesa-dev xorg-dev
+        run: sudo apt update && sudo apt install -y libgl1-mesa-dev xorg-dev
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -27,7 +27,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.50.0
+          version: v1.50.1
           skip-cache: true
           args: --timeout=3m
         continue-on-error: false
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: installing dependencies
-        run: sudo apt install -y libgl1-mesa-dev xorg-dev
+        run: sudo apt update && sudo apt install -y libgl1-mesa-dev xorg-dev
       - uses: actions/setup-go@v3
         with:
           go-version: ${{ env.GO_VERSION }}
@@ -83,7 +83,7 @@ jobs:
     steps:
       - name: installing dependencies
         if: startsWith(matrix.os, 'ubuntu-')
-        run: sudo apt install -y libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64
+        run: sudo apt update && sudo apt install -y libgl1-mesa-dev xorg-dev gcc-mingw-w64-x86-64
       - name: Select the latest version of Xcode
         if: startsWith(matrix.os, 'macos-')
         uses: devbotsxyz/xcode-select@v1
@@ -91,26 +91,8 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
-      - name: Install the Apple certificate and provisioning profile
-        if: startsWith(matrix.os, 'macos-')
-        run: |
-          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-          PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
-          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode --output $PP_PATH
-          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
-          security find-identity -v
-          brew tap mitchellh/gon
-          brew install mitchellh/gon/gon
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-plugin_massa-core_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-plugin_massa-core/
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
       - name: Sign macos application
         if: startsWith(matrix.os, 'macos-')
         run: gon -log-level=debug -log-json ./gon_${{ matrix.arch }}.json
@@ -118,4 +100,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-plugin_massa-core_${{ matrix.target }}_${{ matrix.arch }}
+          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
