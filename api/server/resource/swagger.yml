@@ -182,6 +182,47 @@ paths:
           description: Internal Server Error - The server has encountered a situation it does not know how to handle.
           schema:
             $ref: "#/definitions/Error"
+  /rest/wallet/{nickname}/signOperation:
+    post:
+      operationId: restWalletSignOperation
+      parameters:
+        - in: path
+          name: nickname
+          type: string
+          required: true
+          description: Wallet's short name.
+        - in: body
+          name: body
+          required: true
+          x-nullable: false
+          schema:
+            type: object
+            required:
+              - operation
+            properties:
+              operation:
+                description: Serialized attributes of the operation to be signed with the key pair corresponding to the given nickname.
+                type: string
+                format: byte
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Signature.
+          schema:
+            $ref: "#/definitions/Signature"
+        "400":
+          description: Bad request.
+          schema:
+            $ref: "#/definitions/Error"
+        "422":
+          description: Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.
+          schema:
+            $ref: "#/definitions/Error"
+        "500":
+          description: Internal Server Error - The server has encountered a situation it does not know how to handle.
+          schema:
+            $ref: "#/definitions/Error"
 definitions:
   Error:
     type: object
@@ -197,6 +238,22 @@ definitions:
       message:
         description: error message.
         type: string
+        x-nullable: false
+  Signature:
+    type: object
+    description: Signature of a sent operation.
+    required:
+      - signature
+      - publicKey
+    properties:
+      publicKey:
+        description: Public part of the key pair used to sign the operation.
+        type: string
+        x-nullable: false
+      signature:
+        description: Hash of the operation attributes encrypted with the private part of the key pair.
+        type: string
+        format: byte
         x-nullable: false
   Wallet:
     type: object

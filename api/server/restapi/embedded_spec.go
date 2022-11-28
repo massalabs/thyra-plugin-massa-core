@@ -259,6 +259,68 @@ func init() {
         }
       }
     },
+    "/rest/wallet/{nickname}/signOperation": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "restWalletSignOperation",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's short name.",
+            "name": "nickname",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "operation"
+              ],
+              "properties": {
+                "operation": {
+                  "description": "Serialized attributes of the operation to be signed with the key pair corresponding to the given nickname.",
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signature.",
+            "schema": {
+              "$ref": "#/definitions/Signature"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/web/wallet/{resource}": {
       "get": {
         "produces": [
@@ -311,6 +373,27 @@ func init() {
         "message": {
           "description": "error message.",
           "type": "string",
+          "x-nullable": false
+        }
+      }
+    },
+    "Signature": {
+      "description": "Signature of a sent operation.",
+      "type": "object",
+      "required": [
+        "signature",
+        "publicKey"
+      ],
+      "properties": {
+        "publicKey": {
+          "description": "Public part of the key pair used to sign the operation.",
+          "type": "string",
+          "x-nullable": false
+        },
+        "signature": {
+          "description": "Hash of the operation attributes encrypted with the private part of the key pair.",
+          "type": "string",
+          "format": "byte",
           "x-nullable": false
         }
       }
@@ -613,6 +696,68 @@ func init() {
         }
       }
     },
+    "/rest/wallet/{nickname}/signOperation": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "operationId": "restWalletSignOperation",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "Wallet's short name.",
+            "name": "nickname",
+            "in": "path",
+            "required": true
+          },
+          {
+            "x-nullable": false,
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "operation"
+              ],
+              "properties": {
+                "operation": {
+                  "description": "Serialized attributes of the operation to be signed with the key pair corresponding to the given nickname.",
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signature.",
+            "schema": {
+              "$ref": "#/definitions/Signature"
+            }
+          },
+          "400": {
+            "description": "Bad request.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity - syntax is correct, but the server was unable to process the contained instructions.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error - The server has encountered a situation it does not know how to handle.",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
     "/web/wallet/{resource}": {
       "get": {
         "produces": [
@@ -665,6 +810,27 @@ func init() {
         "message": {
           "description": "error message.",
           "type": "string",
+          "x-nullable": false
+        }
+      }
+    },
+    "Signature": {
+      "description": "Signature of a sent operation.",
+      "type": "object",
+      "required": [
+        "signature",
+        "publicKey"
+      ],
+      "properties": {
+        "publicKey": {
+          "description": "Public part of the key pair used to sign the operation.",
+          "type": "string",
+          "x-nullable": false
+        },
+        "signature": {
+          "description": "Hash of the operation attributes encrypted with the private part of the key pair.",
+          "type": "string",
+          "format": "byte",
           "x-nullable": false
         }
       }

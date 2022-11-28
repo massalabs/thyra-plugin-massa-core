@@ -71,6 +71,9 @@ func NewMassaCoreAPI(spec *loads.Document) *MassaCoreAPI {
 		RestWalletListHandler: RestWalletListHandlerFunc(func(params RestWalletListParams) middleware.Responder {
 			return middleware.NotImplemented("operation RestWalletList has not yet been implemented")
 		}),
+		RestWalletSignOperationHandler: RestWalletSignOperationHandlerFunc(func(params RestWalletSignOperationParams) middleware.Responder {
+			return middleware.NotImplemented("operation RestWalletSignOperation has not yet been implemented")
+		}),
 		WebWalletHandler: WebWalletHandlerFunc(func(params WebWalletParams) middleware.Responder {
 			return middleware.NotImplemented("operation WebWallet has not yet been implemented")
 		}),
@@ -135,6 +138,8 @@ type MassaCoreAPI struct {
 	RestWalletImportHandler RestWalletImportHandler
 	// RestWalletListHandler sets the operation handler for the rest wallet list operation
 	RestWalletListHandler RestWalletListHandler
+	// RestWalletSignOperationHandler sets the operation handler for the rest wallet sign operation operation
+	RestWalletSignOperationHandler RestWalletSignOperationHandler
 	// WebWalletHandler sets the operation handler for the web wallet operation
 	WebWalletHandler WebWalletHandler
 
@@ -243,6 +248,9 @@ func (o *MassaCoreAPI) Validate() error {
 	}
 	if o.RestWalletListHandler == nil {
 		unregistered = append(unregistered, "RestWalletListHandler")
+	}
+	if o.RestWalletSignOperationHandler == nil {
+		unregistered = append(unregistered, "RestWalletSignOperationHandler")
 	}
 	if o.WebWalletHandler == nil {
 		unregistered = append(unregistered, "WebWalletHandler")
@@ -365,6 +373,10 @@ func (o *MassaCoreAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/rest/wallet"] = NewRestWalletList(o.context, o.RestWalletListHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/rest/wallet/{nickname}/signOperation"] = NewRestWalletSignOperation(o.context, o.RestWalletSignOperationHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
