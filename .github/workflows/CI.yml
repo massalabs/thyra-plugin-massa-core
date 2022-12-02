@@ -92,7 +92,7 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
       - uses: actions/checkout@v3
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-plugin_massa-core_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-plugin_massa-core/
       - name: Sign macos application
         if: startsWith(matrix.os, 'macos-')
         run: gon -log-level=debug -log-json ./gon_${{ matrix.arch }}.json
@@ -100,4 +100,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+          path: thyra-plugin_massa-core_${{ matrix.target }}_${{ matrix.arch }}
