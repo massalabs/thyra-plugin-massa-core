@@ -54,12 +54,12 @@ jobs:
         with:
           os: ${{ matrix.os }}
       - name: Build binary for ${{ matrix.target }} on ${{ matrix.arch}}
-        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-server_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-server/
+        run: GOOS=${{ matrix.target }} GOARCH=${{ matrix.arch }} CGO_ENABLED=1 CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} go build -o thyra-plugin_massa-core_${{ matrix.target }}_${{ matrix.arch }} ./cmd/thyra-plugin_massa-core/
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}-${{ matrix.arch }}-binary
-          path: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+          path: thyra-plugin_massa-core_${{ matrix.target }}_${{ matrix.arch }}
       - name: Create release and upload binaries
         if: ${{ env.RELEASE_VERSION != '' }}
         uses: softprops/action-gh-release@v1
@@ -68,4 +68,4 @@ jobs:
           draft: ${{ env.RELEASE_AS_DRAFT }}
           prerelease: ${{ env.RELEASE_AS_PRERELEASE }}
           generate_release_notes: ${{ env.GENERATE_RELEASE_NOTES }}
-          files: thyra-server_${{ matrix.target }}_${{ matrix.arch }}
+          files: thyra-plugin_massa-core_${{ matrix.target }}_${{ matrix.arch }}
