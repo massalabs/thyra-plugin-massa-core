@@ -1,7 +1,14 @@
 package main
 
-import "github.com/massalabs/thyra-plugin-massa-core/internal/api"
+import (
+	"fyne.io/fyne/v2/app"
+	"github.com/massalabs/thyra-plugin-massa-core/internal/api"
+)
 
 func main() {
-	api.StartServer()
+	myApp := app.New()
+
+	go api.StartServer(&myApp)
+
+	myApp.Run()
 }
